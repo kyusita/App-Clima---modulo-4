@@ -1,5 +1,7 @@
+/***********************
+ MODELO DE DATOS
+************************/
 
-// Ciudades y pronósticos simulados
 const lugares = [
   {
     id: 1,
@@ -56,7 +58,7 @@ const lugares = [
   {
     id: 5,
     nombre: "Punta Arenas",
-    tempActual: 9,
+    tempActual: 8,
     estadoActual: "Ventoso",
     pronosticoSemanal: [
       { dia: "Lunes", min: 3, max: 9, estado: "Ventoso" },
@@ -69,27 +71,32 @@ const lugares = [
 ];
 
 
-/**
- FUNCIONEs
-**/
+/***********************
+ FUNCIONES
+************************/
 
+// Buscar lugar por ID
 function obtenerLugarPorId(id) {
   return lugares.find(lugar => lugar.id === id);
 }
 
+
+// Calcular estadísticas semanales
 function calcularEstadisticas(pronostico) {
+
   let minTemp = pronostico[0].min;
   let maxTemp = pronostico[0].max;
-  let suma = 0;
+  let sumaPromedios = 0;
   let conteoEstados = {};
 
   for (let i = 0; i < pronostico.length; i++) {
+
     const dia = pronostico[i];
 
     if (dia.min < minTemp) minTemp = dia.min;
     if (dia.max > maxTemp) maxTemp = dia.max;
 
-    suma += (dia.min + dia.max) / 2;
+    sumaPromedios += (dia.min + dia.max) / 2;
 
     if (conteoEstados[dia.estado]) {
       conteoEstados[dia.estado]++;
@@ -98,26 +105,28 @@ function calcularEstadisticas(pronostico) {
     }
   }
 
-  const promedio = (suma / pronostico.length).toFixed(1);
+  const promedio = (sumaPromedios / pronostico.length).toFixed(1);
 
-  let estadoDominante = Object.keys(conteoEstados)[0];
+  // Determinar clima predominante
+  let climaPredominante = Object.keys(conteoEstados)[0];
 
   for (let estado in conteoEstados) {
-    if (conteoEstados[estado] > conteoEstados[estadoDominante]) {
-      estadoDominante = estado;
+    if (conteoEstados[estado] > conteoEstados[climaPredominante]) {
+      climaPredominante = estado;
     }
   }
 
+  // Generar resumen textual
   let resumen = "";
 
-  if (estadoDominante === "Soleado") {
+  if (climaPredominante === "Soleado") {
     resumen = "Semana mayormente soleada ☀️";
-  } else if (estadoDominante === "Lluvioso") {
+  } else if (climaPredominante === "Lluvioso") {
     resumen = "Semana con lluvias frecuentes 🌧️";
-  } else if (estadoDominante === "Ventoso") {
+  } else if (climaPredominante === "Ventoso") {
     resumen = "Semana con fuertes vientos 💨";
   } else {
-    resumen = `Semana con predominio de clima ${estadoDominante}`;
+    resumen = `Semana con predominio de clima ${climaPredominante}`;
   }
 
   return {
@@ -125,16 +134,18 @@ function calcularEstadisticas(pronostico) {
     maxTemp,
     promedio,
     conteoEstados,
-    resumen
+    resumen,
+    climaPredominante
   };
 }
 
 
 /***********************
- RENDER HOME se usa para mostrar la lista de ciudades disponibles
+ RENDER HOME
 ************************/
 
 function renderHome() {
+
   const app = document.getElementById("app");
   app.innerHTML = "<h2>Ciudades disponibles</h2>";
 
@@ -142,6 +153,7 @@ function renderHome() {
   container.classList.add("card-container");
 
   lugares.forEach(lugar => {
+
     const card = document.createElement("div");
     card.classList.add("card");
 
@@ -167,6 +179,7 @@ function renderHome() {
 ************************/
 
 function renderDetalle(id) {
+
   const lugar = obtenerLugarPorId(id);
   const estadisticas = calcularEstadisticas(lugar.pronosticoSemanal);
   const app = document.getElementById("app");
@@ -175,6 +188,19 @@ function renderDetalle(id) {
 
   const detalle = document.createElement("div");
   detalle.classList.add("detalle");
+
+  // Agregar clase según clima predominante
+  const clima = estadisticas.climaPredominante;
+
+  if (clima === "Soleado") {
+    detalle.classList.add("clima-soleado");
+  } else if (clima === "Lluvioso") {
+    detalle.classList.add("clima-lluvioso");
+  } else if (clima === "Ventoso") {
+    detalle.classList.add("clima-ventoso");
+  } else {
+    detalle.classList.add("clima-nublado");
+  }
 
   detalle.innerHTML = `
     <h2>${lugar.nombre}</h2>
@@ -198,8 +224,9 @@ function renderDetalle(id) {
       <p>Días por tipo de clima:</p>
       <ul>
         ${Object.entries(estadisticas.conteoEstados)
-          .map(([estado, cantidad]) => `<li>${estado}: ${cantidad} días</li>`)
-          .join("")}
+          .map(([estado, cantidad]) =>
+            `<li>${estado}: ${cantidad} días</li>`
+          ).join("")}
       </ul>
       <p><strong>${estadisticas.resumen}</strong></p>
     </div>
