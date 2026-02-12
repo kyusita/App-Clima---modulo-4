@@ -161,3 +161,27 @@ button:hover {
     padding: 30px;
   }
 }
+
+/* ============================= */
+/* COLORES SEGÚN CLIMA */
+/* ============================= */
+
+.clima-soleado {
+  background: linear-gradient(135deg, #ffe259, #ffa751);
+  color: #333;
+}
+
+.clima-lluvioso {
+  background: linear-gradient(135deg, #4e73df, #1cc88a);
+  color: rgb(5, 5, 5);
+}
+
+.clima-ventoso {
+  background: linear-gradient(135deg, #bdc3c7, #2c3e50);
+  color: rgb(5, 5, 5);
+}
+
+.clima-nublado {
+  background: linear-gradient(135deg, #d7d2cc, #304352);
+  color:  rgb(5, 5, 5);
+}
