@@ -56,7 +56,7 @@ const lugares = [
   {
     id: 5,
     nombre: "Punta Arenas",
-    tempActual: 8,
+    tempActual: 9,
     estadoActual: "Ventoso",
     pronosticoSemanal: [
       { dia: "Lunes", min: 3, max: 9, estado: "Ventoso" },
